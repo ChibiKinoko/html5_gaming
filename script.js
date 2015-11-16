@@ -1,7 +1,9 @@
-var stage,
-    bullets = new Array();
+var stage;
 var ship;
 var bulletImg;
+var bullets = new Array();
+var enemyImg;
+var enemys = new Array();
 
 function main() {
 
@@ -25,7 +27,9 @@ function main() {
 
     bulletImg = new Image();
     bulletImg.src = 'img/bullet.png';
-    //bullets.push(new createjs.Bitmap(bulletImg));
+
+    enemyImg = new Image();
+    enemyImg.src = 'img/enemy.png';
 
     stage.addChild(bg, bg2, ship); //ajout des images
 
@@ -49,6 +53,7 @@ function main() {
     });
     
     createjs.Ticker.addEventListener("tick", shoot);
+    createjs.Ticker.addEventListener("tick", displayEnemy);
     createjs.Ticker.addEventListener("tick", function () {
         stage.update();
     });
@@ -57,21 +62,44 @@ function main() {
 var lastShoot = 0;
 
 function shoot() {
-    if (Date.now() - lastShoot > 1000) {
+    if (Date.now() - lastShoot > 500) {
         lastShoot = Date.now();
+        //console.log(lastShoot);
+
         bullets.push(new createjs.Bitmap(bulletImg));
         var bullet = bullets[bullets.length - 1]
-        stage.addChild(bullet); //ajout des images
-        bullet.x = ship.x, 10;
-        bullet.y = ship.y + 5;
+
+        stage.addChild(bullet); //ajout des bullets
+        bullet.x = ship.x + 12;
+        bullet.y = ship.y;
+
         //console.log(bullet.canvas.width);
     }
     //console.log(Date.now());
     bullets.forEach(function (bullet) {
         bullet.y -= 10;
     });
-    
+}
 
+var lastEnemyDisplay = 0;
+
+function displayEnemy() {
+   var random = Math.floor(Math.random() * (580 + 1));
+
+   if (Date.now() - lastEnemyDisplay > 2000) {
+        lastEnemyDisplay = Date.now();
+        console.log(lastEnemyDisplay);
+
+        enemys.push(new createjs.Bitmap(enemyImg));
+        var enemy = enemys[enemys.length - 1]
+
+        stage.addChild(enemy); //ajout des bullets
+        enemy.x = random;
+    }
+
+    enemys.forEach(function (enemy) {
+        enemy.y += 3;
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
