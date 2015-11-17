@@ -11,6 +11,9 @@ var lastEnemyDisplay = 0;
 var score = 0;
 var scoreText;
 
+var bulletEnemy;
+var bulletsEnemy = new Array();
+
 function main() {
 
     //The stage contains all of the display objects we will be painting to our canvas. 
@@ -42,12 +45,21 @@ function main() {
     enemyImg = new Image();
     enemyImg.src = 'img/enemy.png';
 
+    enemy = new createjs.Bitmap(enemyImg);
+
+    //BULLETS ENEMY
+    bulletEnemyImg = new Image();
+    bulletEnemyImg.src = 'img/bulletEnemy.png';
+
+    //bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
+
+
     //SCORE
     scoreText = new createjs.Text("score : " + score, "20px Verdana", "#FFFFFF");
     scoreText.x = 5;
     scoreText.y = 10;
 
-    stage.addChild(bg, bg2, ship, scoreText); //ajout des images
+    stage.addChild(bg, bg2, ship, scoreText, enemy); //ajout des images
 
     bg2.y = 451;
     ship.x = 280;
@@ -64,12 +76,13 @@ function main() {
             if (ship.x > 0) {
                 ship.x -= 10;
             };
-        } else if (e.keyCode == 38) {
-            shoot();
-        }
+        } 
+        // else if (e.keyCode == 38) {
+        //     shoot();
+        // }
     });
 
-    createjs.Ticker.addEventListener("tick", shoot);
+    //createjs.Ticker.addEventListener("tick", shoot);
     createjs.Ticker.addEventListener("tick", displayEnemy);
     createjs.Ticker.addEventListener("tick", stage);
 };
@@ -110,6 +123,7 @@ function failed() {
 }
 
 function displayEnemy() {
+    shoot();
     var random = Math.floor(Math.random() * (550 + 1));
 
     if (Date.now() - lastEnemyDisplay > 3000) {
@@ -120,8 +134,25 @@ function displayEnemy() {
 
         stage.addChild(enemy); //ajout des bullets
         enemy.x = random;
+
+        setInterval(function() {
+            bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
+            bulletsEnemy.push(bulletEnemy);
+
+            stage.addChild(bulletEnemy);
+            bulletEnemy.x = enemy.x + 20;
+            bulletEnemy.y = enemy.y + 50;
+        }, 2000);
     }
+
+    bulletsEnemy.forEach(function (bulletEnemy) {
+        bulletEnemy.y += 20;
+    });
     
+    attackEnemy();
+}
+
+function attackEnemy() {
     for (var j = 0; j < enemys.length; j++) {
 
         enemys[j].y += 3;
