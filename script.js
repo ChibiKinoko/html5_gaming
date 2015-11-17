@@ -1,14 +1,15 @@
 var stage;
 var ship;
 var bulletImg;
-var bullet;
+//var bullet;
 var bullets = new Array();
 var enemyImg;
 var enemys = new Array();
-var enemy;
+//var enemy;
 var lastShoot = 0;
 var lastEnemyDisplay = 0;
 var score = 0;
+var scoreText;
 
 function main() {
 
@@ -35,28 +36,22 @@ function main() {
     bulletImg = new Image();
     bulletImg.src = 'img/bullet.png';
 
-    //bullet = new createjs.Bitmap(bulletImg);
+    // bullet = new createjs.Bitmap(bulletImg);
 
     //ENEMY
     enemyImg = new Image();
     enemyImg.src = 'img/enemy.png';
-    //enemy = new createjs.Bitmap(enemyImg);
 
     //SCORE
-    var scoreText = new createjs.Text("score : " + score, "20px Verdana", "#FFFFFF");
+    scoreText = new createjs.Text("score : " + score, "20px Verdana", "#FFFFFF");
     scoreText.x = 5;
     scoreText.y = 10;
-    // scoreText.textBaseline = "alphabetic";
 
     stage.addChild(bg, bg2, ship, scoreText); //ajout des images
 
     bg2.y = 451;
     ship.x = 280;
     ship.y = 810;
-    // enemy.x = 550;
-    // enemy.y = 160;
-    // enemy.x = 350;
-    // enemy.y = 260;
 
     stage.update();
 
@@ -79,49 +74,46 @@ function main() {
     createjs.Ticker.addEventListener("tick", stage);
 };
 
+function scoreUpdate() {
+    score += 100;
+    stage.removeChild(scoreText);
+    scoreText = new createjs.Text("score : " + score, "20px Verdana", "#FFFFFF");
+    scoreText.x = 5;
+    scoreText.y = 10;
+    stage.addChild(scoreText);
+}
 
 function shoot() {
-    if (Date.now() - lastShoot > 500) {
+    if (Date.now() - lastShoot > 1000) {
         lastShoot = Date.now();
-        //console.log(lastShoot);
-        
+
         bullet = new createjs.Bitmap(bulletImg);
         stage.addChild(bullet); //ajout des bullets
         bullet.x = ship.x + 12;
         bullet.y = ship.y;
         bullets.push(bullet);
     }
-    
+
     for (var i = 0; i < bullets.length; i++) {
-            bullets[i].y -= 10;
-            if (bullets[i].y == 10) {
-                stage.removeChild(bullets[i]);
-                bullets.splice(i, 1);
-            }
+        bullets[i].y -= 10;
+        if (bullets[i].y == 10) {
+            stage.removeChild(bullets[i]);
+            bullets.splice(i, 1);
+        }
     };
 }
-// function shoot() {
-//     stage.addChild(bullet);
-//     bullet.x = ship.x + 12;
-//     bullet.y = ship.y;z
-//     setInterval(function() {
-//         bullet.y -= 20;
-//         if (bullet.y == 10) {
-//             stage.removeChild(bullet);
-//         };
-        
-//     }, 150);
-// }
+function failed() {
+    var textFail = new createjs.Text("Perdu !", "40px Verdana", "#FFFFFF");
+    textFail.x = 170;
+    textFail.y = 170;
+    stage.addChild(textFail);
+}
 
 function displayEnemy() {
     var random = Math.floor(Math.random() * (550 + 1));
 
     if (Date.now() - lastEnemyDisplay > 3000) {
         lastEnemyDisplay = Date.now();
-
-        // enemys.push(new createjs.Bitmap(enemyImg));
-        // var enemy = enemys[enemys.length - 1]
-        
 
         var enemy = new createjs.Bitmap(enemyImg);
         enemys.push(enemy);
@@ -131,34 +123,26 @@ function displayEnemy() {
     }
     
     for (var j = 0; j < enemys.length; j++) {
-        
+
         enemys[j].y += 3;
 
-        if (enemys[j].y == 851) {
+        if (enemys[j].y >= 851) {
+            //console.log('tto');
             stage.removeChild(enemys[j]);
-            enemys[j].splice(j, 1);
+            // enemys[j].splice(j, 1);
+            failed();
         };
 
         for (var k = 0; k < bullets.length; k++) {
             if (typeof enemys[j] !== "undefined" && bullets[k].x >= enemys[j].x && bullets[k].x + 11 < enemys[j].x + 49 && bullets[k].y < enemys[j].y + 40) {
-                console.log('touche');
+                //console.log('touche');
+                scoreUpdate();
                 stage.removeChild(enemys[j]);
                 enemys.splice(j, 1);
                 stage.removeChild(bullets[k]);
                 bullets.splice(k, 1);
             };
         };
-
-        // if (bullet.x >= enemys[j].x && bullet.x + 11 < enemys[j].x + 49 && bullet.y < enemys[j].y + 40) {
-                
-        //     console.log('touche');
-        //     stage.removeChild(enemys[j]);
-        //     enemys.splice(j, 1);
-        //     stage.removeChild(bullet);
-        //     bullets.splice(bullet, 1);
-        // };
-
-        
     };
 }
 
