@@ -26,8 +26,9 @@ var bg2;
 var play;
 var myVar;
 
-
-
+var level = 0;
+var levelVitesse = 3000;
+var textLevel;
 
 document.addEventListener("DOMContentLoaded", function(event) {
 
@@ -122,9 +123,6 @@ function load() {
     ship.x = 280;
     ship.y = 810;
 
-    console.log(lifeArray);
-
-
     document.addEventListener('keypress', function(e) {
         if (e.keyCode == 39) {
             if(ship.x < 580) {
@@ -137,10 +135,6 @@ function load() {
         }
     });
 
-    console.log(enemys);
-    //console.log(bulletsEnemy);
-    //console.log(bullets);
-
     addBulletEnemy(); //en dehors du tick car need a setInterval
 
     createjs.Ticker.addEventListener("tick", startGame);
@@ -148,6 +142,8 @@ function load() {
 };
 
 function startGame() {
+    //console.log(levelVitesse);
+    levels();
 
     shoot();
 
@@ -228,11 +224,41 @@ function addBulletEnemy() {
     }, 1500);
 }
 
+function levels() {
+    if (score >= 0 && score < 500) {
+        //console.log('lvl 1');
+        textLevel = new createjs.Text("Level 1", "50px Verdana", "#FFFFFF");
+        levelVitesse = 3000;
+
+    } else if (score >= 500 && score < 800) {
+        //console.log('lvl 2');
+        textLevel = new createjs.Text("Level 2", "50px Verdana", "#FFFFFF");
+        levelVitesse = 1050;
+
+    } else if (score => 800 && score < 1000) {
+        //console.log('lvl 3');
+        textLevel = new createjs.Text("Level 3", "50px Verdana", "#FFFFFF");
+        levelVitesse = 875;
+    };
+
+    stage.addChild(textLevel);
+    textLevel.x = 200;
+    textLevel.y = 300;
+
+    setTimeout(function () {
+        //console.log('toto');
+        stage.removeChild(textLevel);
+        stage.update();
+    }, 1000);
+}
+
 function displayEnemy() {
+
+    //console.log(levelVitesse);
 
     var random = Math.floor(Math.random() * (550 + 1));
 
-    if (Date.now() - lastEnemyDisplay > 3000) {
+    if (Date.now() - lastEnemyDisplay > levelVitesse) {
         lastEnemyDisplay = Date.now();
 
         var enemy = new createjs.Bitmap(enemyImg);
@@ -273,14 +299,13 @@ function collisions() {
         for (var m = 0; m < bulletsEnemy.length; m++) { // collision tirs enemy
 
             if (bulletsEnemy[m].x >= ship.x && bulletsEnemy[m].x + 11 < ship.x + 37 && bulletsEnemy[m].y > ship.y) {
-                console.log('touche');
+                //console.log('touche');
                 stage.removeChild(bulletsEnemy[m]); //supression de la bullet qui m'a touche
                 bulletsEnemy.splice(m, 1);
 
                 failed();
             };
             if (typeof bulletsEnemy[m] !== "undefined" && bulletsEnemy[m].y >= 851) {
-                console.log('toto');
                 stage.removeChild(bulletsEnemy[m]);
                 bulletsEnemy.splice(m, 1);
             };
