@@ -19,7 +19,12 @@ var bulletsEnemy = new Array();
 var lifeScore = 3;
 var lifeArray = new Array();
 
-function main() {
+var bg;
+var bg2;
+var play;
+
+
+document.addEventListener("DOMContentLoaded", function(event) {
 
     //The stage contains all of the display objects we will be painting to our canvas. 
     //You can either pass the ID of the canvas you want to use, or a reference to it. 
@@ -28,12 +33,30 @@ function main() {
     // BACKGROUND
     var bgImg = new Image();
     var bg2Img = new Image();
+    var playImg = new Image();
 
     bgImg.src = 'img/stars.png';
     bg2Img.src = 'img/stars.png';
+    playImg.src = 'img/play2.png';
 
-    var bg = new createjs.Bitmap(bgImg);
-    var bg2 = new createjs.Bitmap(bg2Img);
+    bg = new createjs.Bitmap(bgImg);
+    bg2 = new createjs.Bitmap(bg2Img);
+    play = new createjs.Bitmap(playImg);
+
+    var playText = new createjs.Text("New Game", "20px Verdana", "#FFFFFF");
+
+    stage.addChild(bg, bg2, play);
+
+    bg2.y = 451;
+    play.x = 225;
+    play.y = 400;
+    stage.update();
+
+    //main();
+});
+
+function main() {
+
 
     //SHIP
     var shipImg = new Image();
@@ -60,7 +83,7 @@ function main() {
     scoreText.y = 10;
 
 
-    stage.addChild(bg, bg2, ship, scoreText); //ajout des images
+    stage.addChild(ship, scoreText); //ajout des images
     stage.update();
     
     // //LIVES
@@ -81,7 +104,6 @@ function main() {
         stage.update();
     });
 
-    bg2.y = 451;
     ship.x = 280;
     ship.y = 810;
 
@@ -147,14 +169,30 @@ function shoot() {
 
 function failed() {
     var textFail = new createjs.Text("Perdu !", "40px Verdana", "#FFFFFF");
-    textFail.x = 170;
-    textFail.y = 170;
-
-    //stage.addChild(textFail);
+    var finalScore = new createjs.Text("Score final : " + score, "30px Verdana", "#FFFFFF");
 
     stage.removeChild(lifeArray[lifeArray.length - 1]);
+    //lifeArray.splice(0, 1);
+    lifeArray.pop();
     stage.update();
-    lifeArray.splice(lifeArray.length - 1, 1);
+
+    if (!lifeArray.length) {
+        enemys = new Array();
+        bullets = new Array();
+        bulletsEnemy = new Array();
+        // stage.removeChild(bg, bg2, scoreText)
+        createjs.Ticker.removeEventListener("tick", startGame);
+
+        stage.addChild(bg, bg2, textFail, finalScore);
+
+        textFail.x = 250;
+        textFail.y = 350;
+        finalScore.x = 200;
+        finalScore.y = 400;
+        console.log(enemys);
+        console.log(bullets);
+        console.log(bulletsEnemy);
+    };
 
     // setTimeout(function () {
     //     stage.removeChild(textFail);
@@ -219,9 +257,8 @@ function collisions() {
         };
 
         for (var m = 0; m < bulletsEnemy.length; m++) { // collision tirs enemy
-            if (bulletsEnemy[m].x >= ship.x && bulletsEnemy[m].x + 11 < ship.x + 37 && bulletsEnemy[m].y > ship.y) { 
-                console.log('touched');
-                
+            if (bulletsEnemy[m].x >= ship.x && bulletsEnemy[m].x + 11 < ship.x + 37 && bulletsEnemy[m].y > ship.y) {
+
                 stage.removeChild(bulletsEnemy[m]); //supression de la bullet qui m'a touche
                 bulletsEnemy.splice(m, 1);
 
@@ -230,9 +267,3 @@ function collisions() {
         };
     };
 }
-
-
-
-document.addEventListener("DOMContentLoaded", function(event) {
-    main();
-});
