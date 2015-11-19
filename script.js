@@ -206,8 +206,6 @@ function failed() {
 
         clearInterval(myVar);
     };
-
-
 }
 
 function addBulletEnemy() {
@@ -221,7 +219,7 @@ function addBulletEnemy() {
             bulletEnemy.x = enemys[a].x + 20;
             bulletEnemy.y = enemys[a].y + 50;
         };
-    }, 1500);
+    }, 2000);
 }
 
 function levels() {
@@ -230,15 +228,15 @@ function levels() {
         textLevel = new createjs.Text("Level 1", "50px Verdana", "#FFFFFF");
         levelVitesse = 3000;
 
-    } else if (score >= 500 && score < 800) {
+    } else if (score >= 500 && score < 1000) {
         //console.log('lvl 2');
         textLevel = new createjs.Text("Level 2", "50px Verdana", "#FFFFFF");
-        levelVitesse = 1050;
+        levelVitesse = 2000;
 
-    } else if (score => 800 && score < 1000) {
+    } else if (score => 1000 && score < 1300) {
         //console.log('lvl 3');
         textLevel = new createjs.Text("Level 3", "50px Verdana", "#FFFFFF");
-        levelVitesse = 875;
+        levelVitesse = 900;
     };
 
     stage.addChild(textLevel);
@@ -269,7 +267,7 @@ function displayEnemy() {
     }
 
     bulletsEnemy.forEach(function (bulletEnemy) { //deplacement des bullets enemy
-        bulletEnemy.y += 20;
+        bulletEnemy.y += 10;
     });
 }
 
