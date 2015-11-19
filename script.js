@@ -1,18 +1,23 @@
 var stage;
 var ship;
+
 var bulletImg;
-//var bullet;
 var bullets = new Array();
+
 var enemyImg;
 var enemys = new Array();
-//var enemy;
+
 var lastShoot = 0;
 var lastEnemyDisplay = 0;
+
 var score = 0;
 var scoreText;
 
 var bulletEnemy;
 var bulletsEnemy = new Array();
+
+var lifeScore = 3;
+var lifeArray = new Array();
 
 function main() {
 
@@ -45,27 +50,41 @@ function main() {
     enemyImg = new Image();
     enemyImg.src = 'img/enemy.png';
 
-    enemy = new createjs.Bitmap(enemyImg);
-
     //BULLETS ENEMY
     bulletEnemyImg = new Image();
     bulletEnemyImg.src = 'img/bulletEnemy.png';
-
-    //bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
-
 
     //SCORE
     scoreText = new createjs.Text("score : " + score, "20px Verdana", "#FFFFFF");
     scoreText.x = 5;
     scoreText.y = 10;
 
-    stage.addChild(bg, bg2, ship, scoreText, enemy); //ajout des images
+
+    stage.addChild(bg, bg2, ship, scoreText); //ajout des images
+    stage.update();
+    
+    // //LIVES
+    for (var n = 0; n < 3; n++) {
+        var imgLive = new Image();
+        imgLive.src = 'img/lives.png';
+
+        lifeArray.push(new createjs.Bitmap(imgLive));
+    };
+
+    var posImgLive = 600;
+
+    lifeArray.forEach(function (live) {
+        stage.addChild(live);
+        live.y = 851 - 40;
+        live.x = posImgLive - 40;
+        posImgLive -= 30;
+        stage.update();
+    });
 
     bg2.y = 451;
     ship.x = 280;
     ship.y = 810;
 
-    stage.update();
 
     document.addEventListener('keypress', function(e) {
         if (e.keyCode == 39) {
@@ -82,10 +101,20 @@ function main() {
         // }
     });
 
-    //createjs.Ticker.addEventListener("tick", shoot);
-    createjs.Ticker.addEventListener("tick", displayEnemy);
+    addBulletEnemy(); //en dehors du tick car need a setInterval
+
+    createjs.Ticker.addEventListener("tick", startGame);
     createjs.Ticker.addEventListener("tick", stage);
 };
+
+function startGame() {
+
+    shoot();
+
+    displayEnemy();
+
+    collisions();
+}
 
 function scoreUpdate() {
     score += 100;
@@ -115,15 +144,42 @@ function shoot() {
         }
     };
 }
+
 function failed() {
     var textFail = new createjs.Text("Perdu !", "40px Verdana", "#FFFFFF");
     textFail.x = 170;
     textFail.y = 170;
-    stage.addChild(textFail);
+
+    //stage.addChild(textFail);
+
+    stage.removeChild(lifeArray[lifeArray.length - 1]);
+    stage.update();
+    lifeArray.splice(lifeArray.length - 1, 1);
+
+    // setTimeout(function () {
+    //     stage.removeChild(textFail);
+    // }, 500);
+    // stage.update();
+
+
+}
+
+function addBulletEnemy() {
+
+    setInterval(function() {
+        for (var a = 0; a < enemys.length; a++) {
+            bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
+            bulletsEnemy.push(bulletEnemy);
+
+            stage.addChild(bulletEnemy);
+            bulletEnemy.x = enemys[a].x + 20;
+            bulletEnemy.y = enemys[a].y + 50;
+        };
+    }, 1500);
 }
 
 function displayEnemy() {
-    shoot();
+
     var random = Math.floor(Math.random() * (550 + 1));
 
     if (Date.now() - lastEnemyDisplay > 3000) {
@@ -132,46 +188,44 @@ function displayEnemy() {
         var enemy = new createjs.Bitmap(enemyImg);
         enemys.push(enemy);
 
-        stage.addChild(enemy); //ajout des bullets
+        stage.addChild(enemy); //ajout des enemy
         enemy.x = random;
-
-        setInterval(function() {
-            bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
-            bulletsEnemy.push(bulletEnemy);
-
-            stage.addChild(bulletEnemy);
-            bulletEnemy.x = enemy.x + 20;
-            bulletEnemy.y = enemy.y + 50;
-        }, 2000);
     }
 
-    bulletsEnemy.forEach(function (bulletEnemy) {
+    bulletsEnemy.forEach(function (bulletEnemy) { //deplacement des bullets enemy
         bulletEnemy.y += 20;
     });
-    
-    attackEnemy();
 }
 
-function attackEnemy() {
+function collisions() {
     for (var j = 0; j < enemys.length; j++) {
 
         enemys[j].y += 3;
 
-        if (enemys[j].y >= 851) {
-            //console.log('tto');
+        if (enemys[j].y >= 851) { //suppression enemy en dehors du canvas
             stage.removeChild(enemys[j]);
-            // enemys[j].splice(j, 1);
-            failed();
         };
 
-        for (var k = 0; k < bullets.length; k++) {
+        for (var k = 0; k < bullets.length; k++) { // collision tirs allies
             if (typeof enemys[j] !== "undefined" && bullets[k].x >= enemys[j].x && bullets[k].x + 11 < enemys[j].x + 49 && bullets[k].y < enemys[j].y + 40) {
-                //console.log('touche');
+
                 scoreUpdate();
-                stage.removeChild(enemys[j]);
+
+                stage.removeChild(enemys[j]); //suppresion de l'enemis et de la bullet
                 enemys.splice(j, 1);
                 stage.removeChild(bullets[k]);
                 bullets.splice(k, 1);
+            };
+        };
+
+        for (var m = 0; m < bulletsEnemy.length; m++) { // collision tirs enemy
+            if (bulletsEnemy[m].x >= ship.x && bulletsEnemy[m].x + 11 < ship.x + 37 && bulletsEnemy[m].y > ship.y) { 
+                console.log('touched');
+                
+                stage.removeChild(bulletsEnemy[m]); //supression de la bullet qui m'a touche
+                bulletsEnemy.splice(m, 1);
+
+                failed();
             };
         };
     };
