@@ -147,6 +147,7 @@ function load() {
     addBulletEnemy(); //en dehors du tick car need a setInterval
 
     createjs.Ticker.addEventListener("tick", startGame);
+    createjs.Ticker.addEventListener("tick", shoot);
     createjs.Ticker.addEventListener("tick", stage);
 };
 
@@ -154,7 +155,7 @@ function startGame() {
 
     levels();
 
-    shoot();
+    //shoot();
 
     displayEnemy();
 
@@ -204,48 +205,68 @@ function addBulletEnemy() {
     }, 2000);
 }
 
+function addBulletBoss() {
+
+}
+
 function levels() {
-    if (score == 0) {
+    if (score == 0 || score == 100) {
 
-        stage.removeChild(textLevel);
-        textLevel = new createjs.Text("Level 1", "50px Verdana", "#FFFFFF");
+        if (score == 0) {
+            stage.removeChild(textLevel);
+            textLevel = new createjs.Text("Level 1", "50px Verdana", "#FFFFFF");
+            levelVitesse = 3000;
+            stage.addChild(textLevel);
+        } else {
+            setTimeout(function () {
+                stage.removeChild(textLevel);
+            }, 500);
+        }
 
-        levelVitesse = 3000;
-        stage.addChild(textLevel);
+    } else if (score == 500 || score == 600) {
+        if (score == 500) {
+            stage.removeChild(textLevel);
+            textLevel = new createjs.Text("Level 2", "50px Verdana", "#FFFFFF");
+            levelVitesse = 2000;
+            stage.addChild(textLevel);
+        } else {
+            setTimeout(function () {
+                stage.removeChild(textLevel);
+            }, 500);
+        }
 
-    } else if (score == 500) {
-        stage.removeChild(textLevel);
-        textLevel = new createjs.Text("Level 2", "50px Verdana", "#FFFFFF");
-
-        levelVitesse = 2000;
-        stage.addChild(textLevel);
-
-    } else if (score == 1000) {
-        stage.removeChild(textLevel);
-        textLevel = new createjs.Text("Level 3", "50px Verdana", "#FFFFFF");
-
-        levelVitesse = 900
-        stage.addChild(textLevel);
+    } else if (score == 1000 || score == 1100) {
+        if (score == 1000) {
+            stage.removeChild(textLevel);
+            textLevel = new createjs.Text("Level 3", "50px Verdana", "#FFFFFF");
+            levelVitesse = 2000;
+            stage.addChild(textLevel);
+        } else {
+            setTimeout(function () {
+                stage.removeChild(textLevel);
+            }, 500);
+        }
 
     } 
-    // else if (score == 1300) {
+    else if (score == 1400) {
 
-    //     stage.removeChild(textLevel);
-    //     textLevel = new createjs.Text("BOSS", "bold 50px Verdana", "#FFFFFF");
-    //     stage.addChild(textLevel);
+        stage.removeChild(textLevel);
+        textLevel = new createjs.Text("BOSS", "bold 50px Verdana", "#FFFFFF");
+        stage.addChild(textLevel);
 
-    //     enemys = [];
-    //     bulletsEnemy = [];
-    //     createjs.Ticker.removeEventListener("tick", startGame);
-    //     clearInterval(myVar);
+        enemys = [];
+        bulletsEnemy = [];
+        createjs.Ticker.removeEventListener("tick", startGame);
+        createjs.Ticker.removeEventListener("tick", shoot);
+        clearInterval(myVar);
 
-    //     setTimeout(function () {
-    //         stage.removeChild();
-    //         stage.addChild(bg, bg2, scoreText, ship);
-    //         //createjs.Ticker.addEventListener("tick", displayBoss);
-    //         displayBoss();
-    //     }, 1500);
-    // }
+        setTimeout(function () {
+            stage.removeChild();
+            stage.addChild(bg, bg2, scoreText, ship);
+            //createjs.Ticker.addEventListener("tick", displayBoss);
+            displayBoss();
+        }, 1500);
+    }
 
     textLevel.x = 200;
     textLevel.y = 300;
@@ -259,10 +280,10 @@ function displayEnemy() {
         lastEnemyDisplay = Date.now();
 
         var formation =  Math.floor(Math.random() * 2) + 1; //generation d'un nombre aleatoire pour les formation
-        console.log(formation);
+        //console.log(formation);
 
         for (var i = 0; i <= formation ; i++) {
-            
+
             var enemy = new createjs.Bitmap(enemyImg);
             enemys.push(enemy);
 
@@ -283,27 +304,10 @@ function displayBoss() {
     stage.addChild(boss);
     boss.x = 225;
 
-    bulletsEnemy.forEach(function (bullet) {
-        bullet.y += 10;
-    })
+    bossBullets.forEach(function (bossbullet) {
+        bossbullet.y += 10;
+    });
 
-    // bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
-    // bossBullets.push(bulletEnemy);
-    // stage.addChild(bulletEnemy);
-    // bulletEnemy.x = boss.x + 35;
-    // bulletEnemy.y = boss.y + 128;
-
-    // bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
-    // bossBullets.push(bulletEnemy);
-    // stage.addChild(bulletEnemy);
-    // bulletEnemy.x = boss.x + 85;
-    // bulletEnemy.y = boss.y + 128;
-
-    // bossBullets.forEach(function (bossbullet) {
-    //     bossbullet.y += 10;
-    // });
-
-    console.log(createjs.Ticker.getMeasuredFPS());
     stage.update();
 
 
