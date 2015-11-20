@@ -102,7 +102,7 @@ function load() {
     boss = new createjs.Bitmap(bossImg);
 
     //SCORE
-    score = 1000;
+    score = 0;
     scoreText = new createjs.Text("score : " + score, "20px Verdana", "#FFFFFF");
     scoreText.x = 5;
     scoreText.y = 10;
@@ -301,24 +301,24 @@ function displayBoss() {
     stage.addChild(boss);
     boss.x = 225;
 
-    // var timeBoss = setInterval(function () {
-    //     bossBullet = new createjs.Bitmap(bulletEnemyImg);
-    //     bossBullets.push(bossBullet);
-    //     bossBullet2 = new createjs.Bitmap(bulletEnemyImg);
-    //     bossBullets.push(bossBullet2);
+    var timeBoss = setInterval(function () {
+        bossBullet = new createjs.Bitmap(bulletEnemyImg);
+        bossBullets.push(bossBullet);
+        bossBullet2 = new createjs.Bitmap(bulletEnemyImg);
+        bossBullets.push(bossBullet2);
 
-    //     stage.addChild(bossBullet, bossBullet2);
+        stage.addChild(bossBullet, bossBullet2);
 
-    //     bossBullet.x = boss.x + 35;
-    //     bossBullet.y = boss.y + 110;
+        bossBullet.x = boss.x + 35;
+        bossBullet.y = boss.y + 110;
 
-    //     bossBullet2.x = boss.x + 85;
-    //     bossBullet2.y = boss.y + 110;
-    // }, 1000);
+        bossBullet2.x = boss.x + 85;
+        bossBullet2.y = boss.y + 110;
+    }, 1000);
 
-    // createjs.Ticker.removeEventListener("tick", shoot);
-    // createjs.Ticker.removeEventListener("tick", collisionBoss);
-    // createjs.Ticker.removeEventListener("tick", stage);
+    createjs.Ticker.addEventListener("tick", shoot);
+    createjs.Ticker.addEventListener("tick", collisionBoss);
+    createjs.Ticker.addEventListener("tick", stage);
 
 
 }
@@ -407,11 +407,14 @@ function failed() {
     stage.update();
 
     if (!lifeArray.length) {
-        enemys = new Array();
-        bullets = new Array();
-        bulletsEnemy = new Array();
+        enemys = [];
+        bullets = [];
+        bulletsEnemy = [];
+        bossBullets = [];
         // stage.removeChild(bg, bg2, scoreText)
         createjs.Ticker.removeEventListener("tick", startGame);
+        createjs.Ticker.removeEventListener("tick", shoot);
+        createjs.Ticker.removeEventListener("tick", collisionBoss);
 
         stage.addChild(bg, bg2, textFail, finalScore, play);
 
@@ -421,5 +424,6 @@ function failed() {
         finalScore.y = 300;
 
         clearInterval(myVar);
+        clearInterval(timeBoss);
     };
 }
