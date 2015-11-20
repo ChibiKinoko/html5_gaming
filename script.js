@@ -103,7 +103,7 @@ function load() {
     boss = new createjs.Bitmap(bossImg);
 
     //SCORE
-    score = 1300;
+    score = 0;
     scoreText = new createjs.Text("score : " + score, "20px Verdana", "#FFFFFF");
     scoreText.x = 5;
     scoreText.y = 10;
@@ -227,23 +227,25 @@ function levels() {
         levelVitesse = 900
         stage.addChild(textLevel);
 
-    } else if (score == 1300) {
+    } 
+    // else if (score == 1300) {
 
-        stage.removeChild(textLevel);
-        textLevel = new createjs.Text("BOSS", "bold 50px Verdana", "#FFFFFF");
-        stage.addChild(textLevel);
+    //     stage.removeChild(textLevel);
+    //     textLevel = new createjs.Text("BOSS", "bold 50px Verdana", "#FFFFFF");
+    //     stage.addChild(textLevel);
 
-        enemys = [];
-        bulletsEnemy = [];
-        createjs.Ticker.removeEventListener("tick", startGame);
-        clearInterval(myVar);
+    //     enemys = [];
+    //     bulletsEnemy = [];
+    //     createjs.Ticker.removeEventListener("tick", startGame);
+    //     clearInterval(myVar);
 
-        setTimeout(function () {
-            stage.removeChild();
-            stage.addChild(bg, bg2, scoreText, ship);
-            createjs.Ticker.addEventListener("tick", displayBoss);
-        }, 1500);
-    }
+    //     setTimeout(function () {
+    //         stage.removeChild();
+    //         stage.addChild(bg, bg2, scoreText, ship);
+    //         //createjs.Ticker.addEventListener("tick", displayBoss);
+    //         displayBoss();
+    //     }, 1500);
+    // }
 
     textLevel.x = 200;
     textLevel.y = 300;
@@ -256,11 +258,19 @@ function displayEnemy() {
     if (Date.now() - lastEnemyDisplay > levelVitesse) {
         lastEnemyDisplay = Date.now();
 
-        var enemy = new createjs.Bitmap(enemyImg);
-        enemys.push(enemy);
+        var formation =  Math.floor(Math.random() * 2) + 1; //generation d'un nombre aleatoire pour les formation
+        console.log(formation);
 
-        stage.addChild(enemy); //ajout des enemy
-        enemy.x = random;
+        for (var i = 0; i <= formation ; i++) {
+            
+            var enemy = new createjs.Bitmap(enemyImg);
+            enemys.push(enemy);
+
+            stage.addChild(enemy); //ajout des enemy
+            random += i * 40; //decalage des img pour les formations
+            enemy.x = random;
+
+        };
     }
 
     bulletsEnemy.forEach(function (bulletEnemy) { //deplacement des bullets enemy
@@ -273,21 +283,25 @@ function displayBoss() {
     stage.addChild(boss);
     boss.x = 225;
 
-    bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
-    bossBullets.push(bulletEnemy);
-    stage.addChild(bulletEnemy);
-    bulletEnemy.x = boss.x + 35;
-    bulletEnemy.y = boss.y + 128;
+    bulletsEnemy.forEach(function (bullet) {
+        bullet.y += 10;
+    })
 
-    bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
-    bossBullets.push(bulletEnemy);
-    stage.addChild(bulletEnemy);
-    bulletEnemy.x = boss.x + 85;
-    bulletEnemy.y = boss.y + 128;
+    // bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
+    // bossBullets.push(bulletEnemy);
+    // stage.addChild(bulletEnemy);
+    // bulletEnemy.x = boss.x + 35;
+    // bulletEnemy.y = boss.y + 128;
 
-    bossBullets.forEach(function (bossbullet) {
-        bossbullet.y += 10;
-    });
+    // bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
+    // bossBullets.push(bulletEnemy);
+    // stage.addChild(bulletEnemy);
+    // bulletEnemy.x = boss.x + 85;
+    // bulletEnemy.y = boss.y + 128;
+
+    // bossBullets.forEach(function (bossbullet) {
+    //     bossbullet.y += 10;
+    // });
 
     console.log(createjs.Ticker.getMeasuredFPS());
     stage.update();
