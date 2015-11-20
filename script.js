@@ -20,9 +20,10 @@ var bulletsEnemy = new Array();
 
 var bossImg;
 var boss;
-var boss2;
-var boss3;
 var bossBullets = new Array();
+// var bossBullet;
+// var bossBullet2;
+// var bossBullet3;
 
 var lifeScore = 3;
 var lifeArray = new Array();
@@ -36,8 +37,6 @@ var level = 0;
 var levelVitesse = 3000;
 var textLevel;
 
-var flag = false;
-
 document.addEventListener("DOMContentLoaded", function(event) {
 
     //The stage contains all of the display objects we will be painting to our canvas. 
@@ -46,15 +45,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     // BACKGROUND
     var bgImg = new Image();
-    var bg2Img = new Image();
     var playImg = new Image();
 
     bgImg.src = 'img/stars.png';
-    bg2Img.src = 'img/stars.png';
     playImg.src = 'img/play2.png';
 
     bg = new createjs.Bitmap(bgImg);
-    bg2 = new createjs.Bitmap(bg2Img);
+    bg2 = new createjs.Bitmap(bgImg);
     play = new createjs.Bitmap(playImg);
 
     init();
@@ -62,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 function init() {
-    var playText = new createjs.Text("New Game", "40px Verdana", "#FF6666");
+    var playText = new createjs.Text("New Game", "bold 40px Verdana", "#FF6666");
 
     play.addEventListener("click", function ()
     {
@@ -104,20 +101,12 @@ function load() {
     bossImg = new Image();
     bossImg.src = 'img/boss.gif';
     boss = new createjs.Bitmap(bossImg);
-    boss2 = new createjs.Bitmap(bossImg);
-    boss3 = new createjs.Bitmap(bossImg);
-    // boss.x = 225;
-    // boss2.y = 88;
-    // boss2.x = 137;
-    // boss3.y = 88;
-    // boss3.x = 313;
 
     //SCORE
-    score = 0;
+    score = 1300;
     scoreText = new createjs.Text("score : " + score, "20px Verdana", "#FFFFFF");
     scoreText.x = 5;
     scoreText.y = 10;
-
 
     stage.addChild(ship, scoreText); //ajout des images
     stage.update();
@@ -241,7 +230,7 @@ function levels() {
     } else if (score == 1300) {
 
         stage.removeChild(textLevel);
-        textLevel = new createjs.Text("BOSS", "50px Verdana", "#FFFFFF");
+        textLevel = new createjs.Text("BOSS", "bold 50px Verdana", "#FFFFFF");
         stage.addChild(textLevel);
 
         enemys = [];
@@ -250,26 +239,17 @@ function levels() {
         clearInterval(myVar);
 
         setTimeout(function () {
-        stage.removeChild();
-        stage.addChild(bg, bg2, scoreText, ship);
+            stage.removeChild();
+            stage.addChild(bg, bg2, scoreText, ship);
             createjs.Ticker.addEventListener("tick", displayBoss);
-        }, 2000);
+        }, 1500);
     }
 
-    // stage.addChild(textLevel);
     textLevel.x = 200;
     textLevel.y = 300;
-
-    // setTimeout(function () {
-    //     //console.log('toto');
-    //     stage.removeChild(textLevel);
-    //     stage.update();
-    // }, 1000);
 }
 
 function displayEnemy() {
-
-    //console.log(levelVitesse);
 
     var random = Math.floor(Math.random() * (550 + 1));
 
@@ -290,13 +270,29 @@ function displayEnemy() {
 
 function displayBoss() {
 
-    stage.addChild(boss, boss2, boss3);
+    stage.addChild(boss);
     boss.x = 225;
-    boss2.y = 88;
-    boss2.x = 137;
-    boss3.y = 88;
-    boss3.x = 313;
+
+    bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
+    bossBullets.push(bulletEnemy);
+    stage.addChild(bulletEnemy);
+    bulletEnemy.x = boss.x + 35;
+    bulletEnemy.y = boss.y + 128;
+
+    bulletEnemy = new createjs.Bitmap(bulletEnemyImg);
+    bossBullets.push(bulletEnemy);
+    stage.addChild(bulletEnemy);
+    bulletEnemy.x = boss.x + 85;
+    bulletEnemy.y = boss.y + 128;
+
+    bossBullets.forEach(function (bossbullet) {
+        bossbullet.y += 10;
+    });
+
+    console.log(createjs.Ticker.getMeasuredFPS());
     stage.update();
+
+
 }
 
 function collisions() {
