@@ -21,9 +21,8 @@ var bulletsEnemy = new Array();
 var bossImg;
 var boss;
 var bossBullets = new Array();
-// var bossBullet;
-// var bossBullet2;
-// var bossBullet3;
+var bossBullet;
+var bossBullet2;
 
 var lifeScore = 3;
 var lifeArray = new Array();
@@ -103,7 +102,7 @@ function load() {
     boss = new createjs.Bitmap(bossImg);
 
     //SCORE
-    score = 0;
+    score = 1000;
     scoreText = new createjs.Text("score : " + score, "20px Verdana", "#FFFFFF");
     scoreText.x = 5;
     scoreText.y = 10;
@@ -247,8 +246,7 @@ function levels() {
             }, 500);
         }
 
-    } 
-    else if (score == 1400) {
+    } else if (score == 1400) {
 
         stage.removeChild(textLevel);
         textLevel = new createjs.Text("BOSS", "bold 50px Verdana", "#FFFFFF");
@@ -263,7 +261,6 @@ function levels() {
         setTimeout(function () {
             stage.removeChild();
             stage.addChild(bg, bg2, scoreText, ship);
-            //createjs.Ticker.addEventListener("tick", displayBoss);
             displayBoss();
         }, 1500);
     }
@@ -304,13 +301,60 @@ function displayBoss() {
     stage.addChild(boss);
     boss.x = 225;
 
-    bossBullets.forEach(function (bossbullet) {
-        bossbullet.y += 10;
-    });
+    // var timeBoss = setInterval(function () {
+    //     bossBullet = new createjs.Bitmap(bulletEnemyImg);
+    //     bossBullets.push(bossBullet);
+    //     bossBullet2 = new createjs.Bitmap(bulletEnemyImg);
+    //     bossBullets.push(bossBullet2);
 
-    stage.update();
+    //     stage.addChild(bossBullet, bossBullet2);
+
+    //     bossBullet.x = boss.x + 35;
+    //     bossBullet.y = boss.y + 110;
+
+    //     bossBullet2.x = boss.x + 85;
+    //     bossBullet2.y = boss.y + 110;
+    // }, 1000);
+
+    // createjs.Ticker.removeEventListener("tick", shoot);
+    // createjs.Ticker.removeEventListener("tick", collisionBoss);
+    // createjs.Ticker.removeEventListener("tick", stage);
 
 
+}
+
+function collisionBoss() {
+    for (var p = 0; p < bossBullets.length; p++) {
+
+        bossBullets[p].y += 10;
+
+        if (bossBullets[p].y >= 851) { //suppression bulletboss en dehors du canvas
+            stage.removeChild(bossBullets[p]);
+            enemys.splice(p, 1);
+        };
+
+        for (var k = 0; k < bullets.length; k++) { // collision tirs allies
+            if (bullets[k].x >= boss.x && bullets[k].x + 11 < boss.x + 128 && bullets[k].y < boss.y + 128) {
+
+                scoreUpdate();
+
+                //LE BOSS PERD UNE VIE
+            };
+        };
+
+        //COLLISION TIR BOSS
+        if (bossBullets[p].x >= ship.x && bossBullets[p].x + 11 < ship.x + 37 && bossBullets[p].y > ship.y) {
+            //console.log('touche');
+            stage.removeChild(bossBullets[p]); //supression de la bullet qui m'a touche
+            bulletsEnemy.splice(p, 1);
+
+            failed();
+        };
+        if (typeof bossBullets[p] !== "undefined" && bossBullets[p].y >= 851) {
+            stage.removeChild(bossBullets[p]);
+            bulletsEnemy.splice(p, 1);
+        };
+    };
 }
 
 function collisions() {
